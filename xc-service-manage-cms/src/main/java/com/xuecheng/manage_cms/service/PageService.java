@@ -1,10 +1,12 @@
 package com.xuecheng.manage_cms.service;
 
+import com.xuecheng.framework.domain.cms.CmsConfig;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
+import com.xuecheng.manage_cms.dao.CmsConfigRepository;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,38 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 @Service
 public class PageService {
     @Autowired
     CmsPageRepository cmsPageRepository;
+
+    @Autowired
+    CmsConfigRepository cmsConfigRepository;
+
+    @Autowired
+    RestTemplate restTemplate;
+
+
+    /**
+     * 根据id查询mongoDB查询配置页面
+     *
+     * @param id
+     * @return CmsConfig得配置
+     */
+    public CmsConfig getConfigById(String id) {
+        Optional<CmsConfig> optional = cmsConfigRepository.findById(id);
+        if (optional.isPresent()) {
+            CmsConfig cmsConfig = optional.get();
+            return cmsConfig;
+
+        } else {
+            return null;
+        }
+    }
 
     /**
      * @param page             页码从一开始
@@ -52,16 +81,16 @@ public class PageService {
         }
 
         //定义条件对象
-        Example<CmsPage> example = Example.of(cmsPage,exampleMatcher);
-            if (page <= 0) {
-                page = 1;
-            }
+        Example<CmsPage> example = Example.of(cmsPage, exampleMatcher);
+        if (page <= 0) {
+            page = 1;
+        }
         if (size < 0) {
             size = 10;
         }
         page = page - 1;
         Pageable pageable = new PageRequest(page, size);
-        Page<CmsPage> all = cmsPageRepository.findAll(example,pageable); // 使用模糊查询
+        Page<CmsPage> all = cmsPageRepository.findAll(example, pageable); // 使用模糊查询
         QueryResult queryResult = new QueryResult();
         queryResult.setList(all.getContent());  //数据条目
         queryResult.setTotal(all.getTotalElements()); //获得总的数据的数目

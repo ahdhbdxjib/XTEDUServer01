@@ -6,6 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="test-rabbitmq-consumer" />
+        <module name="test-rabbitmq-producer" />
         <module name="test‐freemarker" />
         <module name="xc-framework-common" />
         <module name="xc-framework-model" />
@@ -15,6 +17,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="test-rabbitmq-consumer" target="1.8" />
+      <module name="test-rabbitmq-producer" target="1.8" />
       <module name="test‐freemarker" target="1.8" />
       <module name="xc-framework-common" target="1.8" />
       <module name="xc-framework-model" target="1.8" />

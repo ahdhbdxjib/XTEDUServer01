@@ -5,10 +5,10 @@ import com.rabbitmq.client.*;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class Consumer02_subscribe_email {
-    private static final String QUEUE_INFORM_EMAIL = "queue_info_email";
+public class Consumer04_topics_sms {
     private static final String QUEUE_INFORM_SMS = "queue_info_sms";
-    private static final String EXCHANGE_FANOUT_INFORM = "exchange_info-fanout";
+    private static final String EXCHANGE_TOPIC_INFORM = "exchange_info-topics";
+    private static final String TOPICS_KEY_SMS= "inform.#.sms.#";
     public static void main(String[] args) {
         Connection connection = null;
         Channel channel = null;
@@ -22,9 +22,9 @@ public class Consumer02_subscribe_email {
             connection = connectionFactory.newConnection();
             channel = connection.createChannel();
             //声明交换机
-            channel.exchangeDeclare(EXCHANGE_FANOUT_INFORM,BuiltinExchangeType.FANOUT);
+            channel.exchangeDeclare(EXCHANGE_TOPIC_INFORM,BuiltinExchangeType.TOPIC);
             //交换机和队列绑定：
-            channel.queueBind(QUEUE_INFORM_EMAIL,EXCHANGE_FANOUT_INFORM,"");
+            channel.queueBind(QUEUE_INFORM_SMS,EXCHANGE_TOPIC_INFORM,TOPICS_KEY_SMS);
             DefaultConsumer consumer = new DefaultConsumer(channel) {
                 /**
                  * 消费者接收消息调用此方法
@@ -43,7 +43,7 @@ public class Consumer02_subscribe_email {
                     System.out.println("consumer recieve msg:"+msg);
                 }
             };
-            channel.queueDeclare(QUEUE_INFORM_EMAIL, true, false, false, null);
+            channel.queueDeclare(QUEUE_INFORM_SMS, true, false, false, null);
             /**
              * 监听队列String queue, boolean autoAck,Consumer callback
              * 参数明细
@@ -53,14 +53,11 @@ public class Consumer02_subscribe_email {
              * 3、消费消息的方法，消费者接收到消息后调用此方法
              */
 
-            channel.basicConsume(QUEUE_INFORM_EMAIL, true, consumer);
+            channel.basicConsume(QUEUE_INFORM_SMS, true, consumer);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
-    }
-    public int get(){
-        return Integer.parseInt(null);
     }
 }

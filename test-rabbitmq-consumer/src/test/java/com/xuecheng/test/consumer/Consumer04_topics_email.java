@@ -5,10 +5,10 @@ import com.rabbitmq.client.*;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class Consumer02_subscribe_email {
+public class Consumer04_topics_email {
     private static final String QUEUE_INFORM_EMAIL = "queue_info_email";
-    private static final String QUEUE_INFORM_SMS = "queue_info_sms";
-    private static final String EXCHANGE_FANOUT_INFORM = "exchange_info-fanout";
+    private static final String EXCHANGE_TOPIC_INFORM = "exchange_info-topics";
+    private static final String TOPICS_KEY_EMAIL= "inform.#.email.#";
     public static void main(String[] args) {
         Connection connection = null;
         Channel channel = null;
@@ -22,9 +22,9 @@ public class Consumer02_subscribe_email {
             connection = connectionFactory.newConnection();
             channel = connection.createChannel();
             //声明交换机
-            channel.exchangeDeclare(EXCHANGE_FANOUT_INFORM,BuiltinExchangeType.FANOUT);
+            channel.exchangeDeclare(EXCHANGE_TOPIC_INFORM,BuiltinExchangeType.TOPIC);
             //交换机和队列绑定：
-            channel.queueBind(QUEUE_INFORM_EMAIL,EXCHANGE_FANOUT_INFORM,"");
+            channel.queueBind(QUEUE_INFORM_EMAIL,EXCHANGE_TOPIC_INFORM,TOPICS_KEY_EMAIL);
             DefaultConsumer consumer = new DefaultConsumer(channel) {
                 /**
                  * 消费者接收消息调用此方法
